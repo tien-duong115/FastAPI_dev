@@ -25,7 +25,7 @@ def find_index_post(id):
 counter = 0
 while True: 
     try:
-        conn = psycopg2.connect(host= 'localhost', database='FastAPI_db', user='postgres', password='password', cursor_factory=RealDictCursor)
+        conn = psycopg2.connect(host= 'localhost', database='FastAPI_db', user='postgres', password='', cursor_factory=RealDictCursor)
         cursor = conn.cursor()
         print('>>> Datase connection success!!!')
         break
