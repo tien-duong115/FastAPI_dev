@@ -5,17 +5,15 @@ from sqlalchemy.sql.expression import update
 from ..database import  get_db
 from typing import NewType, Optional, List
 
+router = APIRouter(
+    prefix='/posts',
+    tags=['posts']   ## grouping into each section on UI
+)
 
-router = APIRouter()
-
-
-def find_index_post(id):
-    for i, p in enumerate():
-        if p['id'] == id:
-            return i
+### Router object for post API
 
 
-@router.get('/posts', response_model=List[schema.ReturnPost])
+@router.get('/', response_model=List[schema.ReturnPost])
 def get_post(db: Session = Depends(get_db)):
     post = db.query(model.Post).all()
     p_post = db.query(model.Post)
@@ -23,7 +21,7 @@ def get_post(db: Session = Depends(get_db)):
     return post
 
 
-@router.post("/posts", status_code=status.HTTP_201_CREATED, response_model=schema.ReturnPost)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=schema.ReturnPost)
 def create_posts(post: schema.CheckPost, db: Session = Depends(get_db)):
     new_post = model.Post(**post.dict())    
     db.add(new_post)
@@ -32,7 +30,7 @@ def create_posts(post: schema.CheckPost, db: Session = Depends(get_db)):
     return new_post
 
 
-@router.get("/posts/{id}", response_model=schema.ReturnPost)
+@router.get("/{id}", response_model=schema.ReturnPost)
 def get_one_post(id: int, db: Session = Depends(get_db)):
     p_post = db.query(model.Post).filter(model.Post.id == id)
     print('>>> ', p_post)
@@ -42,7 +40,17 @@ def get_one_post(id: int, db: Session = Depends(get_db)):
                             detail=f'post with id: {id} was not found!')
     return post
 
-# @router.delete('/posts/{id}', response_model=schema.ReturnPost)
+@router.put("/{id}", response_model=schema.schema)
+def update_post(id: int, post: schema.CheckPost,  db: Session = Depends(get_db)):
+    updated_post = db.query(model.Post).filter(model.Post.id == id)
+    if updated_post.first() == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'post with id: {id} does not found!')
+    updated_post.update(post.dict(), synchronize_session=False)
+    db.commit()
+    return  updated_post.first()
+
+
+# @router.delete('/{id}', response_model=schema.ReturnPost)
 # def delete_post(id: int, db: Session = Depends(get_db)):
 #     cursor.execute(""" DELETE FROM post WHERE id = %s returning * """, (str(id)))
 #     delete_post = cursor.fetchone()
@@ -52,7 +60,7 @@ def get_one_post(id: int, db: Session = Depends(get_db)):
 #     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
-# @router.delete('posts/{id}', status_code=status.HTTP_204_NO_CONTENT)
+# @router.delete(/{id}', status_code=status.HTTP_204_NO_CONTENT)
 # def delete_post(id: int, db: Session = Depends(get_db)):
     
 #     post = db.query(model.Post).filter(model.Post.id == id)
@@ -65,12 +73,5 @@ def get_one_post(id: int, db: Session = Depends(get_db)):
 #     db.commit()
 #     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
-@router.put("/posts/{id}", response_model=schema.schema)
-def update_post(id: int, post: schema.CheckPost,  db: Session = Depends(get_db)):
-    updated_post = db.query(model.Post).filter(model.Post.id == id)
-    if updated_post.first() == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'post with id: {id} does not found!')
-    updated_post.update(post.dict(), synchronize_session=False)
-    db.commit()
-    return  updated_post.first()
+
 

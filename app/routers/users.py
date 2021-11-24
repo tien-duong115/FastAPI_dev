@@ -5,10 +5,13 @@ from sqlalchemy.sql.expression import update
 from ..database import  get_db
 from typing import NewType, Optional, List
 
-router = APIRouter()
+router = APIRouter(
+    prefix='/users',
+    tags=['users']    ## grouping into each section on UI
+)
 
 ### User_table API From Here ###
-@router.post("/users", status_code=status.HTTP_201_CREATED, response_model=schema.ReturnUser)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=schema.ReturnUser)
 
 def create_user(user: schema.UserCreate, db: Session = Depends(get_db)):
     user.password =  utils.hash(user.password) ## hashed password
@@ -19,7 +22,7 @@ def create_user(user: schema.UserCreate, db: Session = Depends(get_db)):
     return new_user
 
 
-@router.get("/users", response_model=List[schema.ReturnUser])
+@router.get("/", response_model=List[schema.ReturnUser])
 def get_all_users(db: Session = Depends(get_db)):
     get_user = db.query(model.User_).all()    
     p_user = db.query(model.User_)
@@ -27,7 +30,7 @@ def get_all_users(db: Session = Depends(get_db)):
     return get_user
 
 
-@router.get("/users/{id}", response_model=schema.ReturnUser)
+@router.get("/{id}", response_model=schema.ReturnUser)
 def get_one_users(id: int ,db: Session = Depends(get_db)):
     get_user = db.query(model.User_).filter(model.User_.id == id).first()
     if not get_user:
