@@ -33,3 +33,8 @@ class ReturnUser(BaseModel):
     created_at: datetime
     class Config:
         orm_mode = True
+        
+class userlogin(BaseModel):
+    email: EmailStr
+    password: str
+    
