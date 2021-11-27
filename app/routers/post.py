@@ -22,6 +22,14 @@ def get_post(db: Session = Depends(get_db)):
     return post
 
 
+@router.get('/all', response_model=List[schema.ReturnPost])
+def get_AllPost_ByUser(db: Session = Depends(get_db),
+                       current_user: int = Depends(oauth2.get_current_user)):
+    
+    post = db.query(model.Post).filter(model.Post.owner_id == current_user.id).all()
+    return post
+
+
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schema.ReturnPost)
 def create_posts(post: schema.CheckPost, 
                  db: Session = Depends(get_db), 
@@ -55,23 +63,22 @@ def update_post(id: int, updated_post: schema.CheckPost,
     Update a post with matching ID,
     Post only authenticate if ID are matching
     """
-    post_query = db.query(model.Post).filter(model.Post.id == id)
+    post_1 = db.query(model.Post).filter(model.Post.id == id)
+    post_2 = post_1.first()
 
-    post = post_query.first()
-
-    if post == None:
+    if post_1 == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"post with id: {id} does not exist")
-    print(current_user.id)
-    if post.id != current_user.id:
+  
+    if post_2.owner_id != current_user.id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail="Not authorized to perform requested action")
 
-    post_query.update(updated_post.dict(), synchronize_session=False)
+    post_1.update(updated_post.dict(), synchronize_session=False)
 
     db.commit()
 
-    return post
+    return post_2
 
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT )
@@ -79,16 +86,17 @@ def delete_post(id: int,
                 db: Session = Depends(get_db),
                 current_user: int = Depends(oauth2.get_current_user)):
     
-    post = db.query(model.Post).filter(model.Post.id == id).first()
-    post_2 = db.query(model.Post).filter(model.Post.id == id)
-    if post == None:
+    post_1 = db.query(model.Post).filter(model.Post.id == id)
+    post_2 = post_1.first()
+    
+    if post_1 == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"post with id: {id} does not exist")
 
-    if post.owner_id != current_user.id:
+    if post_2.owner_id != current_user.id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, details='Not authroize as User!')
     
-    post_2.delete(synchronize_session=False)
+    post_1.delete(synchronize_session=False)
     
     db.commit()
     
