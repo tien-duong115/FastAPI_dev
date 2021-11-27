@@ -14,8 +14,7 @@ router = APIRouter(
 ### Router object for post API
 
 @router.get('/', response_model=List[schema.ReturnPost])
-def get_post(db: Session = Depends(get_db),
-             current_user: int = Depends(oauth2.get_current_user)):
+def get_post(db: Session = Depends(get_db)):
     
     post = db.query(model.Post).all()
     p_post = db.query(model.Post)

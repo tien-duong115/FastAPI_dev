@@ -15,12 +15,12 @@ class schema(BaseModel):
     published: bool = True
     
 class CheckPost(schema):
-    pass
+    owner_id: int
 
 class ReturnPost(CheckPost):
     id: int
     created_at: datetime
-    
+    owner_id : int
     class Config:
         orm_mode = True
              
