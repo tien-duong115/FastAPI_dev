@@ -26,8 +26,8 @@ def get_post(db: Session = Depends(get_db)):
 def create_posts(post: schema.CheckPost, 
                  db: Session = Depends(get_db), 
                  current_user: int = Depends(oauth2.get_current_user)):
-    print(current_user.email)
-    new_post = model.Post(**post.dict())    
+    
+    new_post = model.Post(owner_id=current_user.id, **post.dict())
     db.add(new_post)
     db.commit()
     db.refresh(new_post)
@@ -72,6 +72,33 @@ def update_post(id: int, updated_post: schema.CheckPost,
     db.commit()
 
     return post
+
+
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT )
+def delete_post(id: int, 
+                db: Session = Depends(get_db),
+                current_user: int = Depends(oauth2.get_current_user)):
+    
+    post = db.query(model.Post).filter(model.Post.id == id).first()
+    post_2 = db.query(model.Post).filter(model.Post.id == id)
+    if post == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"post with id: {id} does not exist")
+
+    if post.owner_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, details='Not authroize as User!')
+    
+    post_2.delete(synchronize_session=False)
+    
+    db.commit()
+    
+    return Response(status_code=status.HTTP_202_ACCEPTED), print()
+    
+    
+    
+    
+
+
 
 
 

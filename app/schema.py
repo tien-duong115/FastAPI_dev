@@ -15,14 +15,16 @@ class schema(BaseModel):
     published: bool = True
     
 class CheckPost(schema):
-    owner_id: int
+    pass
 
-class ReturnPost(CheckPost):
+class ReturnPost(schema):
     id: int
     created_at: datetime
     owner_id : int
     class Config:
         orm_mode = True
+             
+
              
 class UserCreate(BaseModel):
     email: EmailStr
