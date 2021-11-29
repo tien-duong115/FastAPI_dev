@@ -31,7 +31,7 @@ def find_index_post(id): ### function to find specific ID
 counter = 0
 while True:  ### Connection template to connect with Postgres
     try:
-        conn = psycopg2.connect(host= 'localhost', database='FastAPI_db', user='postgres', password='password', cursor_factory=RealDictCursor)
+        conn = psycopg2.connect(host= '', database='', user='', password='', cursor_factory=RealDictCursor)
         cursor = conn.cursor()
         print('>>> Datase connection success!!!')
         break

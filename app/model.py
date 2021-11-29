@@ -2,6 +2,7 @@ from enum import unique
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.sql.expression import null, text
 from sqlalchemy.sql.schema import ForeignKey
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql.sqltypes import TIMESTAMP, Boolean
 from .database import Base
 
@@ -18,8 +19,8 @@ class Post(Base):
     owner_id = Column(Integer, ForeignKey("users_table.id"
                                         , ondelete="CASCADE")
                                         , nullable=False)
-
-
+    owner_info = relationship("User_")
+    
 class User_(Base):
     __tablename__ = 'users_table'
     id = Column(Integer, primary_key=True, nullable=False)
