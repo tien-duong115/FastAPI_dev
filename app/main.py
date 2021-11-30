@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from .database import engine
 from . import model
+from .config import setting
 from .routers import post, users, auth ### import router object from router folder
 
 ### Bind sqlalchemy object and database schema from model file
