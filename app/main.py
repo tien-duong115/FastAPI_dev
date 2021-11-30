@@ -1,17 +1,6 @@
-from typing import NewType, Optional, List
-from fastapi import FastAPI, Response, status, HTTPException, Depends
-from fastapi.params import Body
-from random import randrange
-from passlib.utils.decor import deprecated_function
-from requests import sessions
-from requests.api import post
-import psycopg2
-from psycopg2.extras import RealDictCursor
-import time
-from sqlalchemy.orm import Session
-from sqlalchemy.sql.expression import update
-from .database import engine, sessionLocal, get_db
-from . import model, schema, utils
+from fastapi import FastAPI
+from .database import engine
+from . import model
 from .routers import post, users, auth ### import router object from router folder
 
 ### Bind sqlalchemy object and database schema from model file
@@ -21,30 +10,7 @@ FirstAPI = FastAPI() ### Generate FastAPI object
 FirstAPI.include_router(post.router) ### included router object into FirstAPI object
 FirstAPI.include_router(users.router)
 FirstAPI.include_router(auth.router)
-
-def find_index_post(id): ### function to find specific ID
-    for i, p in enumerate():
-        if p['id'] == id:
-            return i
-
-
-counter = 0
-while True:  ### Connection template to connect with Postgres
-    try:
-        conn = psycopg2.connect(host= '', database='', user='', password='', cursor_factory=RealDictCursor)
-        cursor = conn.cursor()
-        print('>>> Datase connection success!!!')
-        break
-    except Exception as e:
-        print('connection to database failed!!')
-        print(f'Number of try: {counter}, still receive error!', e)
-        time.sleep(2)
-        counter += 1
-
-        if counter == 5:
-            print(f'Tried {counter}, give up.')
-            break
-        print(counter)
+print(">>>   connected to database")
 
 
 
@@ -58,6 +24,28 @@ while True:  ### Connection template to connect with Postgres
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# def find_index_post(id): ### function to find specific ID
+#     for i, p in enumerate():
+#         if p['id'] == id:
+#             return i
 
 # GET method, get all Post using ORM, without worry with SQL lang
 # @FirstAPI.get('/sqlalchemy')
