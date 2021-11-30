@@ -1,10 +1,10 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from .config import setting
 
 
-
-SQLALCHEMY_DATABASE_URL ='postgresql://postgres:password@localhost/FastAPI_db'
+SQLALCHEMY_DATABASE_URL =f'postgresql://{setting.database_username}:{setting.database_password}@{setting.database_port}/{setting.database_name}'
 
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
@@ -26,7 +26,7 @@ def get_db():
 # counter = 0
 # while True:  ### Connection template to connect with Postgres
 #     try:
-#         conn = psycopg2.connect(host= 'localhost', database='FastAPI_db', user='postgres', password='password', cursor_factory=RealDictCursor)
+#         conn = psycopg2.connect(host= '', database='', user='', password='', cursor_factory=RealDictCursor)
 #         cursor = conn.cursor()
 #         print('>>> Datase connection success!!!')
 #         break
