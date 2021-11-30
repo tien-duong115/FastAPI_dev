@@ -11,14 +11,24 @@ router = APIRouter(
     tags=['posts']   ## grouping into each section on UI
 )
 
-### Router object for post API
+
 
 @router.get('/', response_model=List[schema.ReturnPost])
-def get_post(db: Session = Depends(get_db)):
-    
-    post = db.query(model.Post).all()
-    p_post = db.query(model.Post)
-    print('>>> ', p_post)
+def get_post(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user),
+                                                                        limit: int = 10,
+                                                                        skip: int = 0,
+                                                                        search: Optional[str] = ""):
+    """[
+        Generate get with limit amount ID to return
+    ]
+
+    Args:
+        db (Session, optional): [Database connection and session generator]. Defaults to Depends(get_db).
+        limit (int, optional): [Limit amount of return ID within API query]. Defaults to 10.
+        skip (int, optional): [skip amount of return result starting from].default to 0.
+        search (str, optional): [allowing passing of search key words for matching within url].default to Empty String.
+    """
+    post = db.query(model.Post).filter(model.Post.title.contains(search)).limit(limit).offset(skip).all()
     return post
 
 
