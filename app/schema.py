@@ -2,8 +2,8 @@
 from pydantic import BaseModel, errors, EmailStr
 from datetime import datetime
 from typing import NewType, Optional, List
-
 from app.database import Base
+from pydantic.types import conint #validate only 1 and below can be store
 
 ### validation class, make sure user pass in appropriate FIELDS before POST
 ### Schema to check field requirement and return 
@@ -48,4 +48,9 @@ class token(BaseModel):
     
 class TokenData(BaseModel):
     id: Optional[str] = None
+
+class Vote(BaseModel):
+    post_id: int
+    dir: conint(le=1)
+    
     

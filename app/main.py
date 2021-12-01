@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from .database import engine
 from . import model
 from .config import setting
-from .routers import post, users, auth ### import router object from router folder
+from .routers import post, users, auth, vote ### import router object from router folder
 
 ### Bind sqlalchemy object and database schema from model file
 model.Base.metadata.create_all(bind=engine) 
@@ -11,6 +11,7 @@ FirstAPI = FastAPI() ### Generate FastAPI object
 FirstAPI.include_router(post.router) ### included router object into FirstAPI object
 FirstAPI.include_router(users.router)
 FirstAPI.include_router(auth.router)
+FirstAPI.include_router(vote.router)
 print(">>>   connected to database")
 
 
