@@ -5,21 +5,22 @@ from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import update
 from ..database import  get_db
 from typing import NewType, Optional, List
+from sqlalchemy import func
 
 router = APIRouter(
     prefix='/posts',
     tags=['posts']   ## grouping into each section on UI
 )
 
-
-
-@router.get('/', response_model=List[schema.ReturnPost])
+# , response_model=List[schema.ReturnPost]
+@router.get('/', response_model=List[schema.PostOut])
 def get_post(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user),
                                                                         limit: int = 10,
                                                                         skip: int = 0,
                                                                         search: Optional[str] = ""):
     """[
-        Generate get with limit amount ID to return
+        Generate get with limit amount ID to return.
+        Added in feature of count total votes.
     ]
 
     Args:
@@ -27,9 +28,13 @@ def get_post(db: Session = Depends(get_db), current_user: int = Depends(oauth2.g
         limit (int, optional): [Limit amount of return ID within API query]. Defaults to 10.
         skip (int, optional): [skip amount of return result starting from].default to 0.
         search (str, optional): [allowing passing of search key words for matching within url].default to Empty String.
-    """
-    post = db.query(model.Post).filter(model.Post.title.contains(search)).limit(limit).offset(skip).all()
-    return post
+    # """
+    # post = db.query(model.Post).filter(model.Post.title.contains(search)).limit(limit).offset(skip).all()
+    
+    result = db.query(model.Post, func.count(model.Vote.post_id).label('votes')).join(model.Vote, model.Vote.post_id == model.Post.id, isouter=True).group_by(model.Post.id).filter(model.Post.title.contains(search)).limit(limit).offset(skip).all()
+
+    
+    return result
 
 
 @router.get('/all', response_model=List[schema.ReturnPost])
@@ -52,13 +57,13 @@ def create_posts(post: schema.CheckPost,
     return new_post
 
 
-@router.get("/{id}", response_model=schema.ReturnPost)
+@router.get("/{id}", response_model=schema.PostOut)
 def get_one_post(id: int, db: Session = Depends(get_db),
                  current_user: int = Depends(oauth2.get_current_user)):
     
-    p_post = db.query(model.Post).filter(model.Post.id == id)
-    print('>>> ', p_post)
-    post = db.query(model.Post).filter(model.Post.id == id).first()
+
+    post = db.query(model.Post, func.count(model.Vote.post_id).label('votes')).join(model.Vote, model.Vote.post_id == model.Post.id, isouter=True).group_by(model.Post.id).filter(model.Post.id == id).first()
+    
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
                             detail=f'post with id: {id} was not found!')

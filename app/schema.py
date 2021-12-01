@@ -41,7 +41,6 @@ class UserCreate(BaseModel):
     email: EmailStr
     password: str
 
-        
 class token(BaseModel):
     access_token : str
     token_type: str
@@ -52,5 +51,13 @@ class TokenData(BaseModel):
 class Vote(BaseModel):
     post_id: int
     dir: conint(le=1)
+    
+class PostOut(BaseModel):
+    Post: ReturnPost
+    votes: int
+    
+    class Config:
+        orm_mode = True
+        
     
     
