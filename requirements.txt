@@ -59,7 +59,7 @@ pyOpenSSL==21.0.0
 pyperclip==1.8.2
 PyRect==0.1.4
 PyScreeze==0.1.28
-python-dateutil < 1.4
+python-dateutil ==  1.4
 python-dotenv==0.19.2
 python-jose==3.3.0
 python-multipart==0.0.5
