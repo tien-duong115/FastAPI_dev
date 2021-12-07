@@ -4,8 +4,9 @@ from sqlalchemy.orm import sessionmaker
 from .config import setting
 
 
-SQLALCHEMY_DATABASE_URL =f'postgresql://{setting.database_username}:{setting.database_password}@{setting.database_port}/{setting.database_name}'
+# SQLALCHEMY_DATABASE_URL =f'postgresql://{setting.database_username}:{setting.database_password}@{setting.database_port}/{setting.database_name}'
 
+SQLALCHEMY_DATABASE_URL="postgres://yqdgywckylcgnd:29038f8a717dc8f95878b0b5790152662df4692fbf57ba295a205c154c6b489b@ec2-34-195-69-118.compute-1.amazonaws.com:5432/d87o7hsgt58uir"
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
