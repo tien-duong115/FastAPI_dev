@@ -21,7 +21,7 @@ class Post(Base):
                                         , ondelete="CASCADE")
                                         , nullable=False)
     owner_info = relationship("User_")
-    client_number = Column(String, nullable=False)
+
     
 class User_(Base):
     __tablename__ = 'users_table'
@@ -29,7 +29,7 @@ class User_(Base):
     email = Column(String, nullable=False, unique=True)
     password = Column(String, nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('NOW()'))
-    remove_id = Column(String, nullable=False)
+    
 
 class Vote(Base): # composite key of ID column from each tables
     __tablename__='votes'
